@@ -13,6 +13,9 @@ import PortfolioTracker from './components/PortfolioTracker';
 import BrokerAPIIntegration from './components/BrokerAPIIntegration';
 import AIStrategyAssistant from './components/AIStrategyAssistant';
 
+// Import the brand logo SVG component
+import TradeFusionLogo from './assets/TradeFusionLogo';
+
 // Array of dashboard features for navigation
 const features = [
   {
@@ -65,9 +68,17 @@ function App() {
     <div className="app">
       <nav className="navbar">
         <div className="container">
-          <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
-            <div className="logo">
-              <span className="logo-symbol">*</span> TradeFusion
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
+            <div className="logo" style={{ alignItems: 'center', display: 'flex', gap: 12 }}>
+              <TradeFusionLogo size={28} style={{ marginRight: 3 }} />
+              <span style={{
+                fontWeight: 700,
+                fontSize: '1.18em',
+                letterSpacing: '.03em',
+                color: 'var(--primary)'
+              }}>
+                TradeFusion
+              </span>
             </div>
             <span className="subtitle" style={{ display: 'flex', alignItems: 'center', color: '#00ffff', fontWeight: 400, fontSize: '1.05rem' }}>
               Modular FinTech Dashboard

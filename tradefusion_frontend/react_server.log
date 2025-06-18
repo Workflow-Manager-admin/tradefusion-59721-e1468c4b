@@ -15,21 +15,23 @@ cacheable modules 1.42 MiB
   modules by path ./src/ 172 KiB
     modules by path ./src/components/*.js 158 KiB 10 modules
     modules by path ./src/*.css 9.1 KiB 4 modules
-    modules by path ./src/*.js 5.11 KiB
+    modules by path ./src/*.js 5.09 KiB
       ./src/index.js 530 bytes [built] [code generated]
-      ./src/App.js 4.59 KiB [built] [code generated]
+      ./src/App.js 4.58 KiB [built] [code generated]
   modules by path ./.ve/ 15.1 KiB
     modules by path ./.ve/*.js 10.6 KiB 2 modules
     modules by path ./.ve/*.css 2.93 KiB 2 modules
     ./.ve/EditorOverlay.jsx 1.58 KiB [built] [code generated]
-webpack 5.99.9 compiled successfully in 1499 ms
+webpack 5.99.9 compiled successfully in 1658 ms
 assets by status 1.98 KiB [cached] 1 asset
 assets by path *.js 1.6 MiB
   asset bundle.js 1.59 MiB [emitted] (name: main)
-  asset main.c9ff6c5a46cda90b64ad.hot-update.js 9.34 KiB [emitted] [immutable] [hmr] (name: main)
-asset main.c9ff6c5a46cda90b64ad.hot-update.json 28 bytes [emitted] [immutable] [hmr]
-Entrypoint main 1.6 MiB = bundle.js 1.59 MiB main.c9ff6c5a46cda90b64ad.hot-update.js 9.34 KiB
+  asset main.77fa97a9f7553292a6c2.hot-update.js 12.9 KiB [emitted] [immutable] [hmr] (name: main)
+asset main.77fa97a9f7553292a6c2.hot-update.json 28 bytes [emitted] [immutable] [hmr]
+Entrypoint main 1.6 MiB = bundle.js 1.59 MiB main.77fa97a9f7553292a6c2.hot-update.js 12.9 KiB
 cached modules 1.42 MiB [cached] 51 modules
 runtime modules 27.5 KiB 14 modules
-./src/App.js 4.58 KiB [built] [code generated]
-webpack 5.99.9 compiled successfully in 134 ms
+javascript modules 6.65 KiB
+  ./src/App.js 5.16 KiB [built] [code generated]
+  ./src/assets/TradeFusionLogo.js 1.49 KiB [built] [code generated]
+webpack 5.99.9 compiled successfully in 118 ms
