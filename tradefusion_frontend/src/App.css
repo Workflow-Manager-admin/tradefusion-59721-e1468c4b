@@ -1,15 +1,27 @@
 :root {
-  --base-light: #00ffff;
-  --base-dark: #00008b;
-  --text-color: #ffffff;
-  --text-secondary: rgba(255, 255, 255, 0.7);
-  --border-color: rgba(255, 255, 255, 0.1);
+  --primary: #0f4c81;
+  --secondary: #f2f2f2;
+  --accent: #ff6f61;
+  --sidebar-bg: #f7fafc;
+  --sidebar-highlight: #e9f2fa;
+  --tab-bg: #f2f4f9;
+  --tab-border: #dae3ed;
+  --card-bg: #fff;
+  --card-shadow: 0 4px 20px 0 rgba(15,76,129,0.09);
+  --card-radius: 18px;
+  --text-color: #18304b;
+  --text-secondary: #537091;
+  --border-color: #e0e7ef;
+  --navbar-bg: #fff;
+  --logo-primary: #0f4c81;
+  --logo-accent: #ff6f61;
+  --transition: 0.18s cubic-bezier(.59,.06,.12,1) all;
 }
 
 body {
   margin: 0;
   font-family: 'Inter', 'Roboto', 'Helvetica', 'Arial', sans-serif;
-  background-color: var(--base-dark);
+  background: var(--secondary);
   color: var(--text-color);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -17,92 +29,160 @@ body {
 
 .app {
   min-height: 100vh;
+  background: var(--secondary);
+  color: var(--text-color);
   display: flex;
   flex-direction: column;
 }
 
 .navbar {
-  background-color: var(--base-dark);
-  padding: 16px;
+  background: var(--navbar-bg);
+  color: var(--text-color);
+  padding: 0 0 0 0;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-bottom: 1px solid var(--border-color);
+  border-bottom: 1.5px solid var(--border-color);
   position: fixed;
   top: 0;
   width: 100%;
   box-sizing: border-box;
   z-index: 100;
+  height: 64px;
+  min-height: 64px;
+  box-shadow: 0 2px 16px 0 rgba(15,76,129,0.04);
 }
 
 .logo {
-  font-size: 1.25rem;
+  font-size: 1.28rem;
   font-weight: 600;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
+  letter-spacing: .02em;
 }
-
 .logo-symbol {
-  color: var(--base-light);
+  color: var(--logo-accent);
+  font-size: 1.3em;
 }
-
 .container {
-  max-width: 900px;
+  max-width: 1100px;
   margin: 0 auto;
   padding: 0 24px;
   width: 100%;
   box-sizing: border-box;
+  display: flex;
+  align-items: center;
+}
+
+.subtitle {
+  color: var(--primary);
+  font-weight: 500;
+  font-size: 1.06rem;
+  opacity: 0.93;
+}
+
+.btn, .btn-large {
+  background: var(--primary);
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 22px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--transition);
+  box-shadow: 0 1.5px 7px 0 rgba(15,76,129,0.11);
+}
+.btn:hover {
+  background: var(--accent);
+  color: #fff;
+}
+
+.btn-large {
+  padding: 12px 28px;
+  font-size: 1.1rem;
 }
 
 .hero {
-  padding-top: 120px;
-  padding-bottom: 64px;
+  padding-top: 124px;
+  padding-bottom: 60px;
   text-align: center;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 24px;
-}
-
-.subtitle {
-  color: var(--base-light);
-  font-weight: 500;
-  font-size: 1.1rem;
+  gap: 22px;
 }
 
 .title {
-  font-size: 3.5rem;
-  font-weight: 600;
-  line-height: 1.2;
+  font-size: 3rem;
+  font-weight: 700;
+  color: var(--primary);
+  line-height: 1.15;
   margin: 0;
 }
 
 .description {
-  font-size: 1.1rem;
+  font-size: 1.07rem;
   line-height: 1.5;
   color: var(--text-secondary);
   max-width: 600px;
   margin-bottom: 16px;
 }
 
-.btn {
-  background-color: var(--base-light);
-  color: white;
-  border: none;
-  border-radius: 4px;
-  padding: 10px 20px;
-  font-size: 1rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
+.card {
+  background: var(--card-bg);
+  border-radius: var(--card-radius);
+  box-shadow: var(--card-shadow);
+  padding: 2rem 1.2rem;
+  margin: 0 auto;
+  max-width: 960px;
+  display: flex;
+  flex-direction: column;
+  gap: .9rem;
+  border: 1.2px solid var(--border-color);
+  transition: box-shadow .17s;
 }
 
-.btn:hover {
-  background-color: #7691ff;
+.card:focus-within, .card:hover {
+  box-shadow: 0 8px 32px 0 rgba(15,76,129,0.15);
+  border-color: var(--primary);
 }
 
-.btn-large {
-  padding: 12px 24px;
-  font-size: 1.1rem;
+@media (max-width: 700px) {
+  .card {
+    padding: 1.3rem .5rem;
+    border-radius: 13px;
+    min-width: 0;
+    max-width: 99vw;
+  }
+  .navbar {
+    padding-left: 3vw;
+    padding-right: 3vw;
+  }
+  .container {
+    padding: 0 9px;
+  }
+}
+
+@media (max-width: 500px) {
+  .navbar {
+    min-height: 38px;
+    height: 46px;
+    font-size: 90%;
+  }
+  .logo {
+    font-size: 1rem;
+  }
+  .subtitle {
+    display: none;
+  }
+}
+
+::-webkit-scrollbar {
+  width: 7px; background: var(--tab-bg);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 5px;
 }
