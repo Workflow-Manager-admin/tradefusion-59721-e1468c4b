@@ -22,4 +22,55 @@ modules by path ./.ve/ 15.1 KiB
     ./.ve/EditorOverlay.css 2.25 KiB [built] [code generated]
     ./node_modules/css-loader/dist/cjs.js!./.ve/EditorOverlay.css 697 bytes [built] [code generated]
   ./.ve/EditorOverlay.jsx 1.58 KiB [built] [code generated]
-webpack 5.99.9 compiled successfully in 1294 ms
+webpack 5.99.9 compiled successfully in 1275 ms
+assets by status 1.98 KiB [cached] 1 asset
+assets by path *.js 1.45 MiB
+  asset bundle.js 1.42 MiB [emitted] (name: main)
+  asset main.c4c3fc2e56e5fd72753f.hot-update.js 30.3 KiB [emitted] [immutable] [hmr] (name: main)
+asset main.c4c3fc2e56e5fd72753f.hot-update.json 28 bytes [emitted] [immutable] [hmr]
+Entrypoint main 1.45 MiB = bundle.js 1.42 MiB main.c4c3fc2e56e5fd72753f.hot-update.js 30.3 KiB
+cached modules 1.26 MiB [cached] 41 modules
+runtime modules 27.5 KiB 14 modules
+javascript modules 13.3 KiB
+  ./src/App.js 4.59 KiB [built] [code generated]
+  ./src/components/DashboardLayout.js 1.46 KiB [built] [code generated]
+  ./src/components/Sidebar.js 1.55 KiB [built] [code generated]
+  ./src/components/TabNavigation.js 1.05 KiB [built] [code generated]
+  ./src/components/StrategyBuilder.js 688 bytes [built] [code generated]
+  ./src/components/HistoricalDataViewer.js 667 bytes [built] [code generated]
+  ./src/components/BacktestingSimulator.js 673 bytes [built] [code generated]
+  ./src/components/PaperTradingDashboard.js 683 bytes [built] [code generated]
+  ./src/components/PortfolioTracker.js 640 bytes [built] [code generated]
+  ./src/components/BrokerAPIIntegration.js 680 bytes [built] [code generated]
+  ./src/components/AIStrategyAssistant.js 676 bytes [built] [code generated]
+webpack 5.99.9 compiled successfully in 164 ms
+assets by status 1.98 KiB [cached] 1 asset
+assets by path *.js 1.42 MiB
+  asset bundle.js 1.42 MiB [emitted] (name: main)
+  asset main.0c8b986f6ab878f3cb0c.hot-update.js 4.16 KiB [emitted] [immutable] [hmr] (name: main)
+asset main.0c8b986f6ab878f3cb0c.hot-update.json 28 bytes [emitted] [immutable] [hmr]
+Entrypoint main 1.42 MiB = bundle.js 1.42 MiB main.0c8b986f6ab878f3cb0c.hot-update.js 4.16 KiB
+cached modules 1.27 MiB [cached] 51 modules
+runtime modules 27.5 KiB 14 modules
+./src/components/DashboardLayout.js 2.03 KiB [built] [code generated]
+webpack 5.99.9 compiled successfully in 43 ms
+assets by status 1.98 KiB [cached] 1 asset
+assets by path *.js 1.42 MiB
+  asset bundle.js 1.42 MiB [emitted] (name: main)
+  asset main.503db51471e5898a2055.hot-update.js 5.18 KiB [emitted] [immutable] [hmr] (name: main)
+asset main.503db51471e5898a2055.hot-update.json 28 bytes [emitted] [immutable] [hmr]
+Entrypoint main 1.42 MiB = bundle.js 1.42 MiB main.503db51471e5898a2055.hot-update.js 5.18 KiB
+cached modules 1.27 MiB [cached] 51 modules
+runtime modules 27.5 KiB 14 modules
+./src/components/Sidebar.js 2.95 KiB [built] [code generated]
+webpack 5.99.9 compiled successfully in 41 ms
+assets by status 1.98 KiB [cached] 1 asset
+assets by path *.js 1.42 MiB
+  asset bundle.js 1.42 MiB [emitted] (name: main)
+  asset main.d0fd3c60445d9f0e1912.hot-update.js 3.69 KiB [emitted] [immutable] [hmr] (name: main)
+asset main.d0fd3c60445d9f0e1912.hot-update.json 28 bytes [emitted] [immutable] [hmr]
+Entrypoint main 1.42 MiB = bundle.js 1.42 MiB main.d0fd3c60445d9f0e1912.hot-update.js 3.69 KiB
+cached modules 1.28 MiB [cached] 51 modules
+runtime modules 27.5 KiB 14 modules
+./src/components/TabNavigation.js 1.72 KiB [built] [code generated]
+webpack 5.99.9 compiled successfully in 42 ms
