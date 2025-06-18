@@ -68,9 +68,14 @@ function calcSMA(data, period = 20) {
   for (let i = 0; i < data.length; ++i) {
     if (i < period - 1) sma.push(null);
     else {
-      let sum = 0;
-      for (let j = i - period + 1; j <= i; ++j) sum += data[j].close;
-      sma.push(sum / period);
+      let sum = 0, count = 0;
+      for (let j = i - period + 1; j <= i; ++j) {
+        if (data[j] && typeof data[j].close === "number") {
+          sum += data[j].close;
+          count++;
+        }
+      }
+      sma.push(count === period ? sum / period : null);
     }
   }
   return sma;
@@ -78,8 +83,12 @@ function calcSMA(data, period = 20) {
 function calcEMA(data, period = 20) {
   if (!data || data.length < period) return [];
   const ema = [], k = 2 / (period + 1);
-  let prev = data[0].close;
+  let prev = data[0] && typeof data[0].close === "number" ? data[0].close : 0;
   for (let i = 0; i < data.length; ++i) {
+    if (!data[i] || typeof data[i].close !== "number") {
+      ema.push(null);
+      continue;
+    }
     if (i === 0) ema.push(prev);
     else if (i < period - 1) {
       prev = (data[i].close + prev * i) / (i + 1);
@@ -95,22 +104,38 @@ function calcRSI(data, period = 14) {
   const rsi = [];
   let gains = 0, losses = 0;
   for (let i = 1; i < period; ++i) {
-    let diff = data[i].close - data[i-1].close;
+    if (
+      !data[i] || !data[i-1] ||
+      typeof data[i].close !== "number" ||
+      typeof data[i-1].close !== "number"
+    ) {
+      rsi.push(null);
+      continue;
+    }
+    let diff = data[i].close - data[i - 1].close;
     if (diff >= 0) gains += diff; else losses -= diff;
     rsi.push(null);
   }
-  let avgGain = gains / (period-1), avgLoss = losses / (period-1);
+  let avgGain = gains / (period - 1), avgLoss = losses / (period - 1);
   for (let i = period; i < data.length; ++i) {
+    if (
+      !data[i] || !data[i-1] ||
+      typeof data[i].close !== "number" ||
+      typeof data[i-1].close !== "number"
+    ) {
+      rsi.push(null);
+      continue;
+    }
     let diff = data[i].close - data[i-1].close;
     if (diff >= 0) {
-      avgGain = (avgGain * (period-1) + diff) / period;
-      avgLoss = (avgLoss * (period-1)) / period;
+      avgGain = (avgGain * (period - 1) + diff) / period;
+      avgLoss = (avgLoss * (period - 1)) / period;
     } else {
-      avgGain = (avgGain * (period-1)) / period;
-      avgLoss = (avgLoss * (period-1) - diff) / period;
+      avgGain = (avgGain * (period - 1)) / period;
+      avgLoss = (avgLoss * (period - 1) - diff) / period;
     }
     const rs = avgLoss === 0 ? 100 : avgGain / avgLoss;
-    rsi.push(100 - (100 / (1+rs)));
+    rsi.push(100 - (100 / (1 + rs)));
   }
   while (rsi.length < data.length) rsi.unshift(null);
   return rsi;
@@ -177,28 +202,49 @@ function simulateStrategyOnData(data, strategyRuleTree) {
       inPosition = true; entryIdx = i;
     } else if (inPosition && !signal) {
       // Exit trade at last closing price
-      trades.push({
-        entryIdx, exitIdx: i,
-        entryPrice: data[entryIdx && entryIdx >= 0 ? entryIdx : i].close,
-        exitPrice: data[i].close
-      });
+      const entryData = data[entryIdx && entryIdx >= 0 ? entryIdx : i];
+      const exitData = data[i];
+      if (
+        entryData && exitData &&
+        typeof entryData.close === "number" &&
+        typeof exitData.close === "number"
+      ) {
+        trades.push({
+          entryIdx,
+          exitIdx: i,
+          entryPrice: entryData.close,
+          exitPrice: exitData.close
+        });
+      }
       inPosition = false; entryIdx = null;
     }
   }
   // If in position at the end, force close
-  if (inPosition && entryIdx !== null && entryIdx < data.length-1) {
-    trades.push({
-      entryIdx, exitIdx: data.length-1,
-      entryPrice: data[entryIdx].close,
-      exitPrice: data[data.length-1].close
-    });
+  if (inPosition && entryIdx !== null && entryIdx < data.length - 1) {
+    const entryData = data[entryIdx];
+    const exitData = data[data.length - 1];
+    if (
+      entryData && exitData &&
+      typeof entryData.close === "number" &&
+      typeof exitData.close === "number"
+    ) {
+      trades.push({
+        entryIdx,
+        exitIdx: data.length - 1,
+        entryPrice: entryData.close,
+        exitPrice: exitData.close
+      });
+    }
   }
   return trades;
 }
 
 function computeStats(trades, data) {
   // ROI: Cumulative return (entry->exit) divided by initial capital (normalized to 1.0 for percentage)
-  const initialPrice = data?.[0]?.close ? data[0].close : 1;
+  const initialPrice =
+    data?.[0] && typeof data[0].close === "number"
+      ? data[0].close
+      : 1;
   let capital = 1, returns = [];
   if (trades.length === 0) {
     // No trades executed
@@ -212,13 +258,15 @@ function computeStats(trades, data) {
   }
   let balances = [1];
   trades.forEach(tr => {
-    const pct = (tr.exitPrice - tr.entryPrice) / tr.entryPrice;
-    capital *= (1 + pct);
-    returns.push(pct);
-    balances.push(capital);
+    if (typeof tr.exitPrice === "number" && typeof tr.entryPrice === "number" && tr.entryPrice !== 0) {
+      const pct = (tr.exitPrice - tr.entryPrice) / tr.entryPrice;
+      capital *= (1 + pct);
+      returns.push(pct);
+      balances.push(capital);
+    }
   });
   // Sharpe Ratio: mean(excess returns)/stddev, but here risk-free is 0, period is simplistic
-  const mean = returns.reduce((a, b) => a + b, 0) / returns.length;
+  const mean = returns.length > 0 ? returns.reduce((a, b) => a + b, 0) / returns.length : 0;
   const std = Math.sqrt(returns.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / (returns.length || 1));
   const sharpe = (!std || std === 0) ? 0 : (mean / std) * Math.sqrt(252 / (data.length || 50));
   // Max Drawdown (from running equity)
@@ -229,22 +277,28 @@ function computeStats(trades, data) {
     if (dd > maxDrawdown) maxDrawdown = dd;
   }
   // Win rate
-  const wins = trades.filter(tr => tr.exitPrice > tr.entryPrice).length;
+  const wins = trades.filter(tr =>
+    typeof tr.exitPrice === "number" && typeof tr.entryPrice === "number" && tr.exitPrice > tr.entryPrice
+  ).length;
   return {
     roi: ((capital - 1) * 100),
     sharpe: sharpe.toFixed(2),
     maxDrawdown: (maxDrawdown * 100),
-    winRate: ((wins / trades.length) * 100),
+    winRate: (returns.length ? ((wins / returns.length) * 100) : 0),
     nTrades: trades.length,
   };
 }
 function computeBuyHoldStats(data) {
-  const first = data[0]?.close ?? 1;
-  const last = data[data.length - 1]?.close ?? first;
+  const first = data[0] && typeof data[0].close === "number" ? data[0].close : 1;
+  const last =
+    data.length > 0 && data[data.length - 1] && typeof data[data.length - 1].close === "number"
+      ? data[data.length - 1].close
+      : first;
   const roi = ((last - first) / first) * 100;
   // For Sharpe, assume simple daily return with no trading, low variance; max drawdown by closing prices
   let peak = first, maxDrawdown = 0, balances = [1];
   for (let i = 1; i < data.length; ++i) {
+    if (!data[i] || typeof data[i].close !== "number") continue;
     if (data[i].close > peak) peak = data[i].close;
     const dd = (peak - data[i].close) / peak;
     if (dd > maxDrawdown) maxDrawdown = dd;
@@ -252,8 +306,16 @@ function computeBuyHoldStats(data) {
   }
   // Daily returns
   const returns = [];
-  for (let i = 1; i < data.length; ++i) returns.push((data[i].close - data[i-1].close) / data[i-1].close);
-  const mean = returns.reduce((a, b) => a + b, 0) / (returns.length || 1);
+  for (let i = 1; i < data.length; ++i) {
+    if (
+      !data[i] || !data[i - 1] ||
+      typeof data[i].close !== "number" ||
+      typeof data[i - 1].close !== "number" ||
+      data[i - 1].close === 0
+    ) continue;
+    returns.push((data[i].close - data[i - 1].close) / data[i - 1].close);
+  }
+  const mean = returns.length > 0 ? returns.reduce((a, b) => a + b, 0) / returns.length : 0;
   const std = Math.sqrt(returns.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / (returns.length || 1));
   const sharpe = (!std || std === 0) ? 0 : (mean / std) * Math.sqrt(252 / (data.length || 50));
   return {
@@ -312,6 +374,15 @@ function BacktestChart({ data, trades, width = 790, height = 290 }) {
     // Draw candlesticks (as lines for lower effort)
     for (let i = 0; i < data.length; ++i) {
       const d = data[i];
+      if (
+        !d ||
+        typeof d.open !== "number" ||
+        typeof d.close !== "number" ||
+        typeof d.high !== "number" ||
+        typeof d.low !== "number"
+      ) {
+        continue;
+      }
       const cX = lpad + (xScale * (i + 0.5));
       const cOpen = tpad + (max - d.open) * yScale;
       const cClose = tpad + (max - d.close) * yScale;
@@ -335,6 +406,10 @@ function BacktestChart({ data, trades, width = 790, height = 290 }) {
     // Overlay trade points
     trades?.forEach((tr, idx) => {
       // Entry Point
+      if (
+        tr.entryIdx == null || !data[tr.entryIdx] ||
+        typeof data[tr.entryIdx].close !== "number"
+      ) return;
       const eX = lpad + xScale * (tr.entryIdx + 0.5);
       const eY = tpad + (max - data[tr.entryIdx].close) * yScale;
       ctx.save();
@@ -351,6 +426,10 @@ function BacktestChart({ data, trades, width = 790, height = 290 }) {
       ctx.restore();
 
       // Exit Point
+      if (
+        tr.exitIdx == null || !data[tr.exitIdx] ||
+        typeof data[tr.exitIdx].close !== "number"
+      ) return;
       const xX = lpad + xScale * (tr.exitIdx + 0.5);
       const xY = tpad + (max - data[tr.exitIdx].close) * yScale;
       ctx.save();
@@ -648,12 +727,16 @@ function BacktestingSimulator() {
               {trades.map((tr, i) => (
                 <tr key={i} style={{ background: i % 2 === 0 ? '#f8fbff' : '#fff' }}>
                   <td style={{ textAlign: 'right', padding: 4 }}>{i + 1}</td>
-                  <td style={{ padding: 4 }}>{data[tr.entryIdx]?.date}</td>
-                  <td style={{ textAlign: 'right', padding: 4 }}>{tr.entryPrice?.toFixed(2)}</td>
-                  <td style={{ padding: 4 }}>{data[tr.exitIdx]?.date}</td>
-                  <td style={{ textAlign: 'right', padding: 4 }}>{tr.exitPrice?.toFixed(2)}</td>
+                  <td style={{ padding: 4 }}>{(tr.entryIdx != null && data[tr.entryIdx]) ? data[tr.entryIdx].date : "--"}</td>
+                  <td style={{ textAlign: 'right', padding: 4 }}>
+                    {typeof tr.entryPrice === 'number' ? tr.entryPrice.toFixed(2) : '--'}
+                  </td>
+                  <td style={{ padding: 4 }}>{(tr.exitIdx != null && data[tr.exitIdx]) ? data[tr.exitIdx].date : "--"}</td>
+                  <td style={{ textAlign: 'right', padding: 4 }}>
+                    {typeof tr.exitPrice === 'number' ? tr.exitPrice.toFixed(2) : '--'}
+                  </td>
                   <td style={{
-                    color: tr.exitPrice > tr.entryPrice ? '#17ae61' : '#e74c3c',
+                    color: typeof tr.exitPrice === 'number' && typeof tr.entryPrice === 'number' && tr.exitPrice > tr.entryPrice ? '#17ae61' : '#e74c3c',
                     textAlign: 'right',
                     fontWeight: 600, padding: 4
                   }}>
