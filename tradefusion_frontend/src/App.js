@@ -67,7 +67,7 @@ function App() {
         <div className="container">
           <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
             <div className="logo">
-              <span className="logo-symbol">*</span> KAVIA AI — TradeFusion
+              <span className="logo-symbol">*</span> TradeFusion
             </div>
             <span className="subtitle" style={{ display: 'flex', alignItems: 'center', color: '#00ffff', fontWeight: 400, fontSize: '1.05rem' }}>
               Modular FinTech Dashboard
